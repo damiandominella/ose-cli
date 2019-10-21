@@ -1,0 +1,26 @@
+{
+	"name": "org_ose_project",
+	"version": "1.0.0",
+	"description": "",
+	"main": "",
+	"oseInstallPath": "C:/ose/workspace/files/install/",
+	"scripts": {
+		"build": "webpack --config webpack.prod.js --module",
+		"dev": "webpack --config webpack.dev.js",
+		"watch": "webpack -w --config webpack.dev.js",
+		"deploy": "node deploy.js"
+	},
+	"author": "Botika",
+	"license": "ISC",
+	"devDependencies": {
+		"copy-webpack-plugin": "^5.0.4",
+		"ts-loader": "^5.4.5",
+		"typescript": "^3.6.4",
+		"uglifyjs-webpack-plugin": "^2.2.0",
+		"webpack": "^4.41.2",
+		"webpack-cli": "^3.3.9",
+		"webpack-merge": "^4.2.2",
+		"zip-folder": "^1.0.0"
+	},
+	"dependencies": {}
+}

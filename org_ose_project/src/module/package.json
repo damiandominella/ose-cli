@@ -1,0 +1,33 @@
+{
+	"routine": {
+		"type": "service",
+		"session_timeout": 30000,
+		"max_instances": -1,
+		"max_concurrent": 5,
+		"interval_ms": 1000,
+		"run": []
+	},
+	"options": {
+		"url": "",
+		"proxy": {
+			"enabled": false,
+			"protocol": "ssl",
+			"ip": "",
+			"port": -1
+		},
+		"browser": {
+			"name": "none",
+			"capabilities": {
+				"is_headless": false,
+				"hide_toolbars": true,
+				"window_size": "800,600",
+				"window_position": "0,0"
+			}
+		}
+	},
+	"name": "module",
+	"enabled": true,
+	"version": "1.0.0",
+	"log_level": "info",
+	"published": true
+}

@@ -1,0 +1,22 @@
+{
+  "name": "ose_cli",
+  "version": "1.0.0",
+  "description": "",
+  "main": "ose_cli.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bin": {
+    "ose_cli": "./ose_cli.js"
+  },
+  "keywords": [],
+  "author": "Damian Dominella",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^2.4.2",
+    "clear": "^0.1.0",
+    "figlet": "^1.2.4",
+    "fs-extra": "^8.1.0",
+    "inquirer": "^7.0.0"
+  }
+}
