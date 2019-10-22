@@ -11,6 +11,7 @@ const zip = require('zip-a-folder');
 // ------------------------------------------------------------------------
 const _deploy = {
 
+    // read list of modules from the dist/ directory
     getDeployableModules: async () => {
         try {
             return await fs.readdir('dist');
@@ -19,6 +20,7 @@ const _deploy = {
         }
     },
 
+    // ask questions to user 
     getConfig: (modules) => {
         const questions = [
             {
@@ -32,7 +34,8 @@ const _deploy = {
         return inquirer.prompt(questions);
     },
 
-    execute: (module) => {
+    // zip the module and move it to the ose install path
+    install: (module) => {
         return new Promise((resolve, reject) => {
             let moduleZip = module + '.zip';
             zip.zipFolder('dist/' + module, moduleZip, (err) => {
@@ -42,19 +45,15 @@ const _deploy = {
                 }
 
                 const OSE_INSTALL_PATH = JSON.parse(fs.readFileSync('package.json')).oseInstallPath;
-                
-                fs.copy(moduleZip, OSE_INSTALL_PATH + moduleZip, (err) => {
+
+                fs.move(moduleZip, OSE_INSTALL_PATH + moduleZip, (err) => {
                     if (err) {
                         console.log(err);
-                        reject('Error during copy ' + moduleZip);
-                    }
-                    fs.unlink(moduleZip, (err) => {
-                        if (err) {
-                            console.log(err);
-                        }
+                        reject('Error during ' + moduleZip + ' generation');
+                    } else {
                         console.log(chalk.green('Module ' + module + ' deployed successfully!'));
                         resolve();
-                    });
+                    }
                 });
             });
         });
@@ -81,9 +80,9 @@ const _deploy = {
             return true;
         }
 
-        // deploy modules
+        // deploy modules (exec promises in sequence)
         config.modules.reduce((p, module) => {
-            return p.then(() => _deploy.execute(module));
+            return p.then(() => _deploy.install(module));
         }, Promise.resolve());
 
         return true;

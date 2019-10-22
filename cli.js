@@ -35,13 +35,13 @@ const run = async () => {
     const command = process.argv[2];
     switch (command) {
         case 'new': {
-            _new.run();
+            await _new.run();
         } break;
         case 'add': {
-            _add.run();
+            await _add.run();
         } break;
         case 'deploy': {
-            _deploy.run();
+            await _deploy.run();
         } break;
         default: {
             console.log(chalk.red('Command not found, run `ose_cli help` for further info'));

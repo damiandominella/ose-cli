@@ -11,6 +11,7 @@ const chalk = require('chalk');
 // ------------------------------------------------------------------------
 const _new = {
 
+    // ask questions to user
     getConfig: () => {
         const questions = [
             {
@@ -45,7 +46,7 @@ const _new = {
                 message: 'OSE install path (absolute path where the modules will be installed):',
                 default: 'C:/ose/workspace/files/install/',
                 validate: (value) => {
-                    if (value.length) { // TODO: concrete validation
+                    if (fs.existsSync(value)) {
                         return true;
                     } else {
                         return 'Please enter a valid path.';
@@ -56,6 +57,7 @@ const _new = {
         return inquirer.prompt(questions);
     },
 
+    // copy files from base/project to destination folder
     setupFolder: async (projectName) => {
         try {
             await fs.copy(
@@ -69,6 +71,7 @@ const _new = {
         }
     },
 
+    // edit package.json file based on prompted configuration
     setConfig: async (config) => {
         const file = config.projectName + '/package.json';
         try {

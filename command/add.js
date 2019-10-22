@@ -42,6 +42,8 @@ const DEFAULT_CONFIG = {
 //                      m o d u l e
 // ------------------------------------------------------------------------
 const _add = {
+
+    // ask questions to user
     getConfig: () => {
         const questions = [
             {
@@ -86,6 +88,7 @@ const _add = {
         return inquirer.prompt(questions);
     },
 
+    // edit the main typescript file of the module 
     setupMainFile: async (file, name) => {
         const buffer = await fs.readFile(file, 'utf-8');
         await fs.writeFile(file, buffer.replace(/_MODULE_NAME_/g, name));
@@ -93,12 +96,17 @@ const _add = {
 
     setupFolder: async (config) => {
         try {
+            // create module folder
             await fs.mkdir('src/' + config.name, { recursive: true });
+
+            // create the package.json based on prompted config and base config
             await fs.writeJSON(
                 'src/' + config.name + '/package.json',
                 { ...DEFAULT_CONFIG, ...config }, // merge objects
-                { spaces: '\t' }
+                { spaces: '\t' } // to indent json
             );
+
+            // add the main typescript class to the module folder and setup it
             await fs.copy(path.join(__dirname, '../base/template/module.ts'), 'src/' + config.name + '/' + config.name + '.ts');
             await _add.setupMainFile('src/' + config.name + '/' + config.name + '.ts', config.name);
 
@@ -124,8 +132,8 @@ const _add = {
             return true;
         }
 
-         // display error
-         console.log(
+        // display error
+        console.log(
             chalk.green('\nModule: ' + config.name + ' cannot be generated')
         );
         return false;
