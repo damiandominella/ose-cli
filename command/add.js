@@ -72,9 +72,7 @@ const _add = {
                 type: 'list',
                 message: 'Log level:',
                 default: 'info',
-                choices: [
-                    { name: 'info' }, { name: 'debug' }, { name: 'error' }
-                ]
+                choices: [ 'info', 'debug', 'error']
             },
             {
                 name: 'published',
@@ -87,6 +85,15 @@ const _add = {
         return inquirer.prompt(questions);
     },
 
+    setupMainFile: async (file, name) => {
+        try {
+            const buffer = await fs.readFile(file, 'utf-8');
+            await fs.writeFile(file,  buffer.replace(/_MODULE_NAME_/g, name));
+        } catch (err) {
+            console.error(err);
+        }
+    },
+
     setupFolder: async (config) => {
         try {
             await fs.mkdir('src/' + config.name, { recursive: true });
@@ -95,8 +102,8 @@ const _add = {
                 { ...DEFAULT_CONFIG, ...config }, // merge objects
                 { spaces: '\t' }
             );
-            await fs.ensureFile('src/' + config.name + '/' + config.name + '.ts')
-
+            await fs.copy('../base/template/module.ts', 'src/' + config.name + '/' + config.name + '.ts');
+            await _add.setupMainFile('src/' + config.name + '/' + config.name + '.ts', config.name);
         } catch (err) {
             console.error(err);
         }
@@ -105,13 +112,13 @@ const _add = {
     run: async () => {
         console.log('\nYou are creating a new module for the project: ' + process.cwd() + '\n');
 
-        // Manage input settings
+        // manage input settings
         const config = await _add.getConfig();
 
-        // Setup folder structure 
+        // setup folder structure 
         await _add.setupFolder(config);
 
-        // Display message
+        // display message
         console.log(
             chalk.green('\nModule: ' + config.name + ' generated successfully!')
         );

@@ -57,8 +57,7 @@ const _new = {
 
     setupFolder: async (projectName) => {
         try {
-            await fs.mkdir(projectName + '/src', { recursive: true });
-            await fs.copy('base', projectName);
+            await fs.copy('base/project', projectName);
         } catch (err) {
             console.error(err);
         }
@@ -82,16 +81,16 @@ const _new = {
     run: async () => {
         console.log('\nYou are generating a new OSE Project\n');
 
-        // Manage input settings
+        // manage input settings
         const config = await _new.getConfig();
 
-        // Setup folder structure 
-        await _new.setupFolder(config.projectName);
+        // setup folder structure 
+        await _new.setupFolder(config.projectName); // TODO: handle error
 
-        // Write configurations to files
-        await _new.setConfig(config);
+        // write configurations to files
+        await _new.setConfig(config); // TODO: handle error
 
-        // Display message
+        // display message
         console.log(
             chalk.green('\nProject: ' + config.projectName + ' generated successfully!')
         );
