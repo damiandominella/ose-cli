@@ -2,6 +2,7 @@
 //                      e x t e r n a l   m o d u l e s
 // ------------------------------------------------------------------------
 const fs = require('fs-extra');
+const path = require('path');
 const inquirer = require('inquirer');
 const chalk = require('chalk');
 
@@ -72,7 +73,7 @@ const _add = {
                 type: 'list',
                 message: 'Log level:',
                 default: 'info',
-                choices: [ 'info', 'debug', 'error']
+                choices: ['info', 'debug', 'error']
             },
             {
                 name: 'published',
@@ -86,12 +87,8 @@ const _add = {
     },
 
     setupMainFile: async (file, name) => {
-        try {
-            const buffer = await fs.readFile(file, 'utf-8');
-            await fs.writeFile(file,  buffer.replace(/_MODULE_NAME_/g, name));
-        } catch (err) {
-            console.error(err);
-        }
+        const buffer = await fs.readFile(file, 'utf-8');
+        await fs.writeFile(file, buffer.replace(/_MODULE_NAME_/g, name));
     },
 
     setupFolder: async (config) => {
@@ -102,10 +99,13 @@ const _add = {
                 { ...DEFAULT_CONFIG, ...config }, // merge objects
                 { spaces: '\t' }
             );
-            await fs.copy('../base/template/module.ts', 'src/' + config.name + '/' + config.name + '.ts');
+            await fs.copy(path.join(__dirname, '../base/template/module.ts'), 'src/' + config.name + '/' + config.name + '.ts');
             await _add.setupMainFile('src/' + config.name + '/' + config.name + '.ts', config.name);
+
+            return true;
         } catch (err) {
             console.error(err);
+            return false;
         }
     },
 
@@ -116,14 +116,19 @@ const _add = {
         const config = await _add.getConfig();
 
         // setup folder structure 
-        await _add.setupFolder(config);
+        if (await _add.setupFolder(config)) {
+            // display message
+            console.log(
+                chalk.green('\nModule: ' + config.name + ' generated successfully!')
+            );
+            return true;
+        }
 
-        // display message
-        console.log(
-            chalk.green('\nModule: ' + config.name + ' generated successfully!')
+         // display error
+         console.log(
+            chalk.green('\nModule: ' + config.name + ' cannot be generated')
         );
-
-        return true;
+        return false;
     },
 };
 

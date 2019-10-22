@@ -7,8 +7,7 @@
   "scripts": {
     "build": "webpack --config webpack.prod.js --module",
     "dev": "webpack --config webpack.dev.js",
-    "watch": "webpack -w --config webpack.dev.js",
-    "deploy": "node deploy.js"
+    "watch": "webpack -w --config webpack.dev.js"
   },
   "author": "Botika",
   "license": "ISC",

@@ -7,11 +7,6 @@ const chalk = require('chalk');
 const zip = require('zip-a-folder');
 
 // ------------------------------------------------------------------------
-//                      c o n s t
-// ------------------------------------------------------------------------
-const OSE_INSTALL_PATH = JSON.parse(fs.readFileSync('package.json')).oseInstallPath;
-
-// ------------------------------------------------------------------------
 //                      m o d u l e
 // ------------------------------------------------------------------------
 const _deploy = {
@@ -45,6 +40,9 @@ const _deploy = {
                     console.log(err);
                     reject('Error during ' + moduleZip + ' generation');
                 }
+
+                const OSE_INSTALL_PATH = JSON.parse(fs.readFileSync('package.json')).oseInstallPath;
+                
                 fs.copy(moduleZip, OSE_INSTALL_PATH + moduleZip, (err) => {
                     if (err) {
                         console.log(err);

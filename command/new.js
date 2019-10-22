@@ -2,6 +2,7 @@
 //                      e x t e r n a l   m o d u l e s
 // ------------------------------------------------------------------------
 const fs = require('fs-extra');
+const path = require('path');
 const inquirer = require('inquirer');
 const chalk = require('chalk');
 
@@ -57,9 +58,14 @@ const _new = {
 
     setupFolder: async (projectName) => {
         try {
-            await fs.copy('base/project', projectName);
+            await fs.copy(
+                path.join(__dirname, '../base/project'),
+                projectName
+            );
+            return true;
         } catch (err) {
             console.error(err);
+            return false;
         }
     },
 
@@ -71,10 +77,13 @@ const _new = {
             package.name = config.projectName;
             package.author = config.author;
             package.oseInstallPath = config.oseInstallPath;
-            
-            await fs.writeJSON(file, package, {spaces: '\t'});
+
+            await fs.writeJSON(file, package, { spaces: '\t' });
+
+            return true;
         } catch (err) {
             console.error(err);
+            return false;
         }
     },
 
@@ -85,17 +94,22 @@ const _new = {
         const config = await _new.getConfig();
 
         // setup folder structure 
-        await _new.setupFolder(config.projectName); // TODO: handle error
+        if (await _new.setupFolder(config.projectName)) {
+            // write configurations to files
+            if (await _new.setConfig(config)) {
+                // display message
+                console.log(
+                    chalk.green('\nProject: ' + config.projectName + ' generated successfully!')
+                );
+                return true;
+            }
+        }
 
-        // write configurations to files
-        await _new.setConfig(config); // TODO: handle error
-
-        // display message
+        // display error
         console.log(
-            chalk.green('\nProject: ' + config.projectName + ' generated successfully!')
+            chalk.red('\nProject: ' + config.projectName + ' cannot be generated')
         );
-
-        return true;
+        return false;
     },
 };
 

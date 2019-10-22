@@ -1,14 +1,14 @@
 {
-  "name": "ose_cli",
+  "name": "ose_modules_cli",
   "version": "1.0.0",
-  "description": "A light command line interface to quickly setup project structure for the OSE microservice architecture",
+  "description": "Command line interface to quickly setup project structure for the OSE microservice architecture",
   "repository": {},
-  "main": "ose_cli.js",
+  "main": "cli.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "bin": {
-    "ose_cli": "./ose_cli.js"
+    "ose": "./cli.js"
   },
   "keywords": [],
   "author": "Damian Dominella",
