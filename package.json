@@ -1,8 +1,8 @@
 {
   "name": "ose_modules_cli",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Command line interface to quickly setup project structure for the OSE microservice architecture",
-  "repository": {},
+  "author": "Damian Dominella <damian.dominella@botika.ai>",
   "main": "cli.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -10,8 +10,19 @@
   "bin": {
     "ose": "./cli.js"
   },
-  "keywords": [],
-  "author": "Damian Dominella",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/damiandominella/ose-modules-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/damiandominella/ose-modules-cli/issues"
+  },
+  "keywords": [
+    "ose",
+    "microservices",
+    "modules",
+    "cli"
+  ],
   "license": "ISC",
   "dependencies": {
     "chalk": "^2.4.2",
