@@ -6,7 +6,7 @@ const path = require('path');
 const inquirer = require('inquirer');
 const chalk = require('chalk');
 
-const _helper = require('./../utils/helper');
+const _helper = require('../utils/helper');
 
 // ------------------------------------------------------------------------
 //                      d e f a u l t   j s o n   c o n f i g
@@ -97,6 +97,13 @@ const _add = {
                 message: 'Published:',
                 default: 'Y'
             },
+            {
+                name: 'routine.type',
+                type: 'list',
+                message: 'Module type:',
+                default: 'service',
+                choices: ['service, program']
+            }
         ];
 
         return inquirer.prompt(questions);

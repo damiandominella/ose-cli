@@ -11,9 +11,9 @@ const yargs = require('yargs');
 // ------------------------------------------------------------------------
 //                      c o m m a n d s
 // ------------------------------------------------------------------------
-const _new = require('./command/new');
-const _add = require('./command/add');
-const _deploy = require('./command/deploy');
+const _new = require('./commands/new');
+const _add = require('./commands/add');
+const _deploy = require('./commands/deploy');
 
 // ------------------------------------------------------------------------
 //                      c o n s t s
