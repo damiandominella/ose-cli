@@ -1,5 +1,5 @@
 {
-  "name": "ose_modules_cli",
+  "name": "ose-modules-cli",
   "version": "0.0.1",
   "description": "Command line interface to quickly setup project structure for the OSE microservice architecture",
   "author": "Damian Dominella <damian.dominella@botika.ai>",

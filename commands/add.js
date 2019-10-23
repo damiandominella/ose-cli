@@ -96,13 +96,6 @@ const _add = {
                 type: 'confirm',
                 message: 'Published:',
                 default: 'Y'
-            },
-            {
-                name: 'routine.type',
-                type: 'list',
-                message: 'Module type:',
-                default: 'service',
-                choices: ['service, program']
             }
         ];
 
