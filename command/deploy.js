@@ -7,9 +7,21 @@ const chalk = require('chalk');
 const zip = require('zip-a-folder');
 
 // ------------------------------------------------------------------------
-//                      m o d u l e
+//                      c o m m a n d   m o d u l e
 // ------------------------------------------------------------------------
 const _deploy = {
+
+    // --------------------------------------------------------------------
+    //                  i n f o
+    // --------------------------------------------------------------------
+    $info: {
+        name: 'deploy',
+        description: 'Deploy compiled module(s) to the OSE Install Path',
+    },
+
+    // --------------------------------------------------------------------
+    //                  m e t h o d s
+    // --------------------------------------------------------------------
 
     // read list of modules from the dist/ directory
     getDeployableModules: async () => {
@@ -59,6 +71,9 @@ const _deploy = {
         });
     },
 
+    // --------------------------------------------------------------------
+    //                  e x e c u t i o n
+    // --------------------------------------------------------------------
     run: async () => {
         // check for deployable modules
         const modules = await _deploy.getDeployableModules();

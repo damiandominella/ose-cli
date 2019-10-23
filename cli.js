@@ -37,13 +37,13 @@ const displayInfo = () => {
 
 const run = async (command) => {
     switch (command) {
-        case 'new': {
+        case _new.$info.name: {
             await _new.run();
         } break;
-        case 'add': {
+        case _add.$info.name: {
             await _add.run();
         } break;
-        case 'deploy': {
+        case _deploy.$info.name: {
             await _deploy.run();
         } break;
         default: {
@@ -58,13 +58,13 @@ const run = async (command) => {
 // ------------------------------------------------------------------------
 const argv = yargs
     .locale('en')
-    
+
     .usage('Usage: $0 <command> | [options]')
 
     // commands
-    .command('new', 'Generate a new OSE Modules Project')
-    .command('add', 'Add a new microservice (module)')
-    .command('deploy', 'Deploy modules')
+    .command(_new.$info.name, _new.$info.description)
+    .command(_add.$info.name, _add.$info.description)
+    .command(_deploy.$info.name, _deploy.$info.description)
 
     // aliases for options
     .alias('h', 'help')
