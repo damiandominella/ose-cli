@@ -55,7 +55,7 @@ const run = async (command) => {
             await _deploy.run();
         } break;
         default: {
-            console.log(chalk.red('Command ' + command + ' not found'));
+            console.log('\n' + chalk.red('Command ' + command + ' not found'));
             console.log('Please see --help for usage.');
         } break;
     }
