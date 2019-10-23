@@ -118,8 +118,6 @@ const _add = {
     },
 
     run: async () => {
-        console.log('\nYou are creating a new module for the project: ' + process.cwd() + '\n');
-
         // manage input settings
         const config = await _add.getConfig();
 

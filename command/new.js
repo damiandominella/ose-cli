@@ -91,8 +91,6 @@ const _new = {
     },
 
     run: async () => {
-        console.log('\nYou are generating a new OSE Project\n');
-
         // manage input settings
         const config = await _new.getConfig();
 

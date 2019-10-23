@@ -60,8 +60,6 @@ const _deploy = {
     },
 
     run: async () => {
-        console.log('\nYou are deploying a new module for the project: ' + process.cwd() + '\n');
-
         // check for deployable modules
         const modules = await _deploy.getDeployableModules();
 

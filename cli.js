@@ -6,6 +6,7 @@
 const chalk = require('chalk');
 const clear = require('clear');
 const figlet = require('figlet');
+const yargs = require('yargs');
 
 // ------------------------------------------------------------------------
 //                      c o m m a n d s
@@ -14,25 +15,27 @@ const _new = require('./command/new');
 const _add = require('./command/add');
 const _deploy = require('./command/deploy');
 
-
 // ------------------------------------------------------------------------
-//                      c o n s t
+//                      c o n s t s
 // ------------------------------------------------------------------------
 const CLI_NAME = 'OSE Modules CLI';
+const VERSION = '0.0.1'; // TODO: read from package.json ?
 
 // ------------------------------------------------------------------------
 //                      f u n c t i o n s
 // ------------------------------------------------------------------------
 const displayTitle = () => {
-    console.log(
-        chalk.yellow(
-            figlet.textSync(CLI_NAME, { horizontalLayout: 'full' })
-        )
-    );
+    console.log(chalk.yellow(figlet.textSync(CLI_NAME, { horizontalLayout: 'full' })));
 }
 
-const run = async () => {
-    const command = process.argv[2];
+// default output when no options
+const displayInfo = () => {
+    displayTitle();
+    console.log(chalk.green('version: ' + VERSION));
+    console.log('Please see --help for usage.');
+}
+
+const run = async (command) => {
     switch (command) {
         case 'new': {
             await _new.run();
@@ -44,15 +47,37 @@ const run = async () => {
             await _deploy.run();
         } break;
         default: {
-            console.log(chalk.red('Command not found, run `ose_cli help` for further info'));
+            console.log(chalk.red('Command ' + command + ' not found'));
+            console.log('Please see --help for usage.');
         } break;
     }
 };
 
-// clear the console before everything
-clear();
+// ------------------------------------------------------------------------
+//                      u s e r   i n t e r f a c e
+// ------------------------------------------------------------------------
+const argv = yargs
+    .locale('en')
+    
+    .usage('Usage: $0 <command> | [options]')
 
-displayTitle();
+    // commands
+    .command('new', 'Generate a new OSE Modules Project')
+    .command('add', 'Add a new microservice (module)')
+    .command('deploy', 'Deploy modules')
 
-// start cli
-run();
+    // aliases for options
+    .alias('h', 'help')
+    .alias('v', 'version')
+    .argv;
+
+const command = argv._[0];
+
+if (command) {
+    run(command);
+} else {
+    // if no arguments 
+    if (Object.keys(argv).length === 2) {
+        displayInfo();
+    }
+}
