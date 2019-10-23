@@ -6,6 +6,8 @@ const path = require('path');
 const inquirer = require('inquirer');
 const chalk = require('chalk');
 
+const _helper = require('./../utils/helper');
+
 // ------------------------------------------------------------------------
 //                      d e f a u l t   j s o n   c o n f i g
 // ------------------------------------------------------------------------
@@ -133,21 +135,29 @@ const _add = {
     //                  e x e c u t i o n
     // --------------------------------------------------------------------
     run: async () => {
+        if (!(await _helper.isOSEProject())) {
+            // display error
+            console.log(
+                chalk.red('\nOSE Project not found, you cannot generate modules in the current folder')
+            );
+            return false;
+        }
+
+        console.log('\nAdding a new module for the project ' + chalk.green.bold(path.basename(path.resolve())) + '\n')
+
         // manage input settings
         const config = await _add.getConfig();
 
         // setup folder structure 
         if (await _add.setupFolder(config)) {
             // display message
-            console.log(
-                chalk.green('\nModule: ' + config.name + ' generated successfully!')
-            );
+            console.log(chalk.green('\nModule ' + chalk.bold(config.name) + ' generated successfully!'));
             return true;
         }
 
         // display error
         console.log(
-            chalk.green('\nModule: ' + config.name + ' cannot be generated')
+            chalk.red('\nModule ' + chalk.bold(config.name) + ' cannot be generated')
         );
         return false;
     },

@@ -6,6 +6,8 @@ const path = require('path');
 const inquirer = require('inquirer');
 const chalk = require('chalk');
 
+const _helper = require('./../utils/helper');
+
 // ------------------------------------------------------------------------
 //                      c o m m a n d   m o d u l e
 // ------------------------------------------------------------------------
@@ -58,7 +60,7 @@ const _new = {
                 message: 'OSE install path (absolute path where the modules will be installed):',
                 default: 'C:/ose/workspace/files/install/',
                 validate: (value) => {
-                    if (fs.existsSync(value)) {
+                    if (fs.pathExistsSync(value)) {
                         return true;
                     } else {
                         return 'Please enter a valid path.';
@@ -106,7 +108,16 @@ const _new = {
     //                  e x e c u t i o n
     // --------------------------------------------------------------------
     run: async () => {
+        if (await _helper.isOSEProject()) {
+            // display error
+            console.log(
+                chalk.red('\nOSE Project already found, you cannot generate another project here')
+            );
+            return false;
+        }
+
         // manage input settings
+        console.log('\n');
         const config = await _new.getConfig();
 
         // setup folder structure 
@@ -115,7 +126,7 @@ const _new = {
             if (await _new.setConfig(config)) {
                 // display message
                 console.log(
-                    chalk.green('\nProject: ' + config.projectName + ' generated successfully!')
+                    chalk.green('\nProject: ' + chalk.bold(config.projectName) + ' generated successfully!')
                 );
                 return true;
             }
@@ -123,7 +134,7 @@ const _new = {
 
         // display error
         console.log(
-            chalk.red('\nProject: ' + config.projectName + ' cannot be generated')
+            chalk.red('\nProject: ' + chalk.bold(config.projectName) + ' cannot be generated')
         );
         return false;
     },

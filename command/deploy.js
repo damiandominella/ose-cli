@@ -6,6 +6,8 @@ const inquirer = require('inquirer');
 const chalk = require('chalk');
 const zip = require('zip-a-folder');
 
+const _helper = require('./../utils/helper');
+
 // ------------------------------------------------------------------------
 //                      c o m m a n d   m o d u l e
 // ------------------------------------------------------------------------
@@ -49,6 +51,9 @@ const _deploy = {
     // zip the module and move it to the ose install path
     install: (module) => {
         return new Promise((resolve, reject) => {
+
+            console.log('Installing module ' + chalk.green.bold(module) + '...');
+
             let moduleZip = module + '.zip';
             zip.zipFolder('dist/' + module, moduleZip, (err) => {
                 if (err) {
@@ -56,17 +61,21 @@ const _deploy = {
                     reject('Error during ' + moduleZip + ' generation');
                 }
 
-                const OSE_INSTALL_PATH = JSON.parse(fs.readFileSync('package.json')).oseInstallPath;
-
-                fs.move(moduleZip, OSE_INSTALL_PATH + moduleZip, (err) => {
+                fs.readJson('package.json', (err, package) => {
                     if (err) {
                         console.log(err);
-                        reject('Error during ' + moduleZip + ' generation');
-                    } else {
-                        console.log(chalk.green('Module ' + module + ' deployed successfully!'));
-                        resolve();
+                        reject('Cannot read oseInstallPath');
                     }
-                });
+                    fs.move(moduleZip, package.oseInstallPath + moduleZip, (err) => {
+                        if (err) {
+                            console.log(err);
+                            reject('Error during ' + moduleZip + ' installation');
+                        } else {
+                            console.log(chalk.green('Module ' + chalk.bold(module) + ' installed successfully!'));
+                            resolve();
+                        }
+                    });
+                })
             });
         });
     },
@@ -75,6 +84,14 @@ const _deploy = {
     //                  e x e c u t i o n
     // --------------------------------------------------------------------
     run: async () => {
+        if (!(await _helper.isOSEProject())) {
+            // display error
+            console.log(
+                chalk.red('\nOSE Project not found, you cannot deploy modules from the current folder')
+            );
+            return false;
+        }
+
         // check for deployable modules
         const modules = await _deploy.getDeployableModules();
 

@@ -3,8 +3,8 @@
 // ------------------------------------------------------------------------
 //                      e x t e r n a l   m o d u l e s
 // ------------------------------------------------------------------------
+const fs = require('fs-extra');
 const chalk = require('chalk');
-const clear = require('clear');
 const figlet = require('figlet');
 const yargs = require('yargs');
 
@@ -18,8 +18,8 @@ const _deploy = require('./command/deploy');
 // ------------------------------------------------------------------------
 //                      c o n s t s
 // ------------------------------------------------------------------------
+const package = fs.readJsonSync('package.json');
 const CLI_NAME = 'OSE Modules CLI';
-const VERSION = '0.0.1'; // TODO: read from package.json ?
 
 // ------------------------------------------------------------------------
 //                      f u n c t i o n s
@@ -31,8 +31,12 @@ const displayTitle = () => {
 // default output when no options
 const displayInfo = () => {
     displayTitle();
-    console.log(chalk.green('version: ' + VERSION));
-    console.log('Please see --help for usage.');
+    console.log('Name: ' + chalk.bold(package.name));
+    console.log('Version: ' + package.version);
+    console.log('Description: ' + package.description);
+    console.log('Repository: ' + chalk.underline(package.repository.url));
+
+    console.log('\nPlease see --help for usage.');
 }
 
 const run = async (command) => {
