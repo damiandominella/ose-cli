@@ -4,31 +4,32 @@
 const fs = require('fs-extra');
 const inquirer = require('inquirer');
 const chalk = require('chalk');
-const zip = require('zip-a-folder');
+const exec = require('child_process').exec;
 
 const _helper = require('./../utils/helper');
 
 // ------------------------------------------------------------------------
 //                      c o m m a n d   m o d u l e
 // ------------------------------------------------------------------------
-const _deploy = {
+const _build = {
 
     // --------------------------------------------------------------------
     //                  i n f o
     // --------------------------------------------------------------------
     $info: {
-        name: 'deploy',
-        description: 'Deploy compiled module(s) to the OSE Install Path',
+        name: 'build',
+        description: 'Build typescript modules with webpack and get ready to deploy',
     },
 
     // --------------------------------------------------------------------
     //                  m e t h o d s
     // --------------------------------------------------------------------
 
-    // read list of modules from the dist/ directory
-    getDeployableModules: async () => {
+    // read list of modules from the src/ directory
+    getModules: async () => {
         try {
-            return await fs.readdir('dist');
+            const files = await fs.readdir('src', { withFileTypes: true });
+            return files.filter((file) => file.isDirectory()).map((file) => file.name);
         } catch (err) {
             return null;
         }
@@ -40,7 +41,7 @@ const _deploy = {
             {
                 name: 'modules',
                 type: 'checkbox',
-                message: 'Select module(s) to deploy:',
+                message: 'Select module(s) to build:',
                 choices: modules
             }
         ];
@@ -48,36 +49,28 @@ const _deploy = {
         return inquirer.prompt(questions);
     },
 
-    // zip the module and move it to the ose install path
-    install: (module) => {
+    // compile module using webpack
+    compile: (module) => {
         return new Promise((resolve, reject) => {
+            console.log('\nBuilding module ' + chalk.green.bold(module) + ', please wait...');
 
-            console.log('\nInstalling module ' + chalk.green.bold(module) + '...');
-
-            let moduleZip = module + '.zip';
-            zip.zipFolder('dist/' + module, moduleZip, (err) => {
-                if (err) {
-                    console.log(err);
-                    reject('Error during ' + moduleZip + ' generation');
+            fs.pathExists('node_modules/webpack', (err, exists) => {
+                if (err || !exists) {
+                    reject('webpack not found, did you forget to run `npm install`?');
+                } else {
+                    let command = 'npm run build ' + module;
+                    // let command = 'node_modules/.bin/webpack --config webpack.prod.js --module ' + module;
+                    exec(command, (err, stdout, stderr) => {
+                        if (err) {
+                            console.log(err, stderr);
+                            reject(module + ': build failed');
+                        } else {
+                            console.log(stdout);
+                            console.log(chalk.green(chalk.bold(module) + ': build completed'));
+                            resolve();
+                        }
+                    });
                 }
-
-                fs.readJson('package.json', (err, package) => {
-                    if (err) {
-                        reject('Cannot read oseInstallPath');
-                    }
-                    fs.move(
-                        moduleZip, package.oseInstallPath + moduleZip,
-                        { overwrite: true },
-                        (err) => {
-                            if (err) {
-                                console.log(err);
-                                reject(module + ': install failed.');
-                            } else {
-                                console.log('\n' + chalk.green(chalk.bold(module) + ': install completed'));
-                                resolve();
-                            }
-                        });
-                })
             });
         });
     },
@@ -88,22 +81,24 @@ const _deploy = {
     run: async () => {
         if (!(await _helper.isOSEProject())) {
             // display error
-            console.log(chalk.red('\nOSE Project not found, you cannot deploy modules from the current folder'));
+            console.log(
+                chalk.red('\nOSE Project not found, you cannot build modules from the current folder')
+            );
             return false;
         }
 
         // check for deployable modules
-        const modules = await _deploy.getDeployableModules();
+        const modules = await _build.getModules();
 
         if (!modules || !modules.length) {
             // display error message
-            console.log(chalk.red('\nNo deployable modules! You have to build your modules before. Please see: `ose build`'));
+            console.log(chalk.red('\nNo modules found. To create modules plase see `ose add`'));
             return false;
         }
 
         // manage input settings
         console.log('\n');
-        const config = await _deploy.getConfig(modules);
+        const config = await _build.getConfig(modules);
 
         if (!config.modules || !config.modules.length) {
             // display warn message
@@ -111,11 +106,11 @@ const _deploy = {
             return true;
         }
 
-        // deploy modules (exec promises in sequence)
+        // build modules (exec promises in sequence)
         let errors = [];
         config.modules.reduce((p, module) => {
             return p
-                .then(() => _deploy.install(module))
+                .then(() => _build.compile(module))
                 .catch((err) => {
                     errors.push(err);
                 })
@@ -123,14 +118,16 @@ const _deploy = {
             if (errors.length > 0) {
                 console.log('\n' + chalk.red(errors.join('\n')));
                 return false;
+            } else {
+                console.log(chalk.green('\nAll modules builded successfully!'));
             }
 
             return true;
         });
-    }
+    },
 };
 
 // ------------------------------------------------------------------------
 //                      e x p o r t s
 // ------------------------------------------------------------------------
-module.exports = _deploy;
+module.exports = _build;

@@ -32,6 +32,10 @@ A module is a microservice written in Typescript, that can be build (using webpa
 
 To create a new module, use the `ose add` command, which will ask you to insert the **module name**  and some other configurations that you can obviously change later.
 
+### Build module(s)
+
+When you're done with your development, you can build the modules. To do this, just use `ose build` and select the modules you want to build from the list. This may take a few seconds to execute, depending on the module files. When the build is done, you can go to the [next step](#deploy-modules) and deploy the builded modules.
+
 ### Deploy module(s)
 
 When you're done and your module is compiled (you must have a `dist/` directory which contains the builds) you're ready to deploy your module(s). By using `ose deploy` you can choose which module(s) to deploy and in a nutshell you will have your modules installed in your OSE environment (here the **ose install path** defined in the project `package.json` is used).
@@ -50,12 +54,17 @@ ose add
 ```
 
 - define name and config of the first module
+
+```bash
+npm install
+```
+
 - develop the module starting from `src/module_name/module_name.ts`
 
 ```bash
-cd ..
-npm run build module_name
-ose deploy
+ose build
 ```
 
-**Note**: a wrapper for build modules will be available soon as a cli command.
+```bash
+ose deploy
+```

@@ -13,6 +13,7 @@ const yargs = require('yargs');
 // ------------------------------------------------------------------------
 const _new = require('./commands/new');
 const _add = require('./commands/add');
+const _build = require('./commands/build');
 const _deploy = require('./commands/deploy');
 
 // ------------------------------------------------------------------------
@@ -47,6 +48,9 @@ const run = async (command) => {
         case _add.$info.name: {
             await _add.run();
         } break;
+        case _build.$info.name: {
+            await _build.run();
+        } break;
         case _deploy.$info.name: {
             await _deploy.run();
         } break;
@@ -68,6 +72,7 @@ const argv = yargs
     // commands
     .command(_new.$info.name, _new.$info.description)
     .command(_add.$info.name, _add.$info.description)
+    .command(_build.$info.name, _build.$info.description)
     .command(_deploy.$info.name, _deploy.$info.description)
 
     // aliases for options
